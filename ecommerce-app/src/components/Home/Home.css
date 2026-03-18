@@ -1,8 +1,14 @@
+:root {
+  --primary-orange-color: #ff5722;
+  --secondary-white-color: #ffffff;
+}
+
 .product-grid{
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
   grid-gap: 20px;
   margin-top: 20px;
+  padding:   40px 60px 0 60px;
 }
 
 .product-grid .product-card {
@@ -12,7 +18,9 @@
   align-items: center;
   padding: 20px;
   height: auto;
-  border: 1px solid orangered;
+  border: 1px solid var(--primary-orange-color);
+  border-radius: 8px;
+  overflow: hidden;
 
 }
 
@@ -23,15 +31,15 @@
   width: 100%;
   padding: 12px;
   border: none;
-  background-color: aqua;
-  color: wheat;
+  background-color: var(--primary-orange-color);
+  color: var(--secondary-white-color);
   font-size: 18px;
   text-align: center;
   cursor: pointer;
 }
 
 .product-card button:hover {
-  background-color: red;
+  background-color: #ff0e0e;
   color: white;
 }
 
@@ -56,9 +64,9 @@
   
 }
 .product-card p .price-tag {
-  background-color: blue;
-  color: #fff;
-  font-size: 12px;
+  background-color: var(--primary-orange-color);
+  color: var(--secondary-white-color);
+  font-size: 18px;
   padding: 4px;
   border-radius: 50%;
   position: absolute;

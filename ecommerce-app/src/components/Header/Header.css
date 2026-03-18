@@ -3,17 +3,20 @@
   --secondary-white-color: #ffffff;
 }
 
+.header-container {
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 .header {
   width: 100%;
-  max-width: 1200px;
   background-color: var(--secondary-white-color);
   padding: 20px;
   color: var(--primary-orange-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
   border-radius: 50px;
   border: 1px solid var(--secondary-white-color);
   box-shadow: 0px 2px 2px var(--primary-orange-color);

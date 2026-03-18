@@ -1,13 +1,20 @@
-import React from 'react'
-import './Header.css'
+import "./Header.css";
+import { Link } from "react-router-dom";
 
 const Header = () => {
-  return (
-    <header className='header'>
-      <h1 className='header-h1'>Store</h1>
-      <button className='logout-btn'>Log Out</button>
-    </header>
-  )
-}
+    return (
+        <div className="header-container">
+            <header className="header">
+                <Link to="/" style={{ textDecoration: "none", color: "#ff5722" }}>
+                    <h1 className="header-h1">Store</h1>
+                </Link>
 
-export default Header
+                <Link to="/logout">
+                    <button className="logout-btn">Log Out</button>
+                </Link>
+            </header>
+        </div>
+    );
+};
+
+export default Header;

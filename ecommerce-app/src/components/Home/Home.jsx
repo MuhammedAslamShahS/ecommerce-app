@@ -8,7 +8,6 @@ const Home = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             const data = await getAllProducts();
-            console.log(data, "data");
             setProducts(data);
         };
         fetchProducts();
