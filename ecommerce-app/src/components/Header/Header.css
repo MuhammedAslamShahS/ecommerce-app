@@ -1,0 +1,32 @@
+:root {
+  --primary-orange-color: #ff5722;
+  --secondary-white-color: #ffffff;
+}
+
+.header {
+  background-color: var(--secondary-white-color);
+  padding: 20px;
+  color: var(--primary-orange-color);
+  display: flex;
+  justify-content: space-between;
+  padding-left: 120px;
+  padding-right: 120px;
+  border-radius: 50px;
+  border: 1px solid var(--secondary-white-color);
+  box-shadow: 0px 2px 2px var(--primary-orange-color);
+}
+
+.header h1 {
+  cursor: pointer;
+}
+
+.header .logout-btn {
+  background-color: var(--primary-orange-color);
+  color: var(--secondary-white-color);
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
