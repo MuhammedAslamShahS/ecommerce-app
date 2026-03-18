@@ -1,4 +1,14 @@
+:root {
+  --primary-orange-color: #ff5722;
+  --secondary-white-color: #ffffff;
+}
 .footer{
-  background-color: aqua;
+  background-color: var(--primary-orange-color);
+  color: var(--secondary-white-color);
   font-size: 23px;
+  margin-top: 100px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
