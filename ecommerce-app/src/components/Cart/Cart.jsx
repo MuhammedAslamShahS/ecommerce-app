@@ -1,6 +1,6 @@
 import "./Cart.css";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart } from "../../cartSlice";
+import { removeFromCart, updateQuantity } from "../../cartSlice";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -8,7 +8,30 @@ const Cart = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
 
-  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  const handleIncrement = (item) => {
+    dispatch(
+      updateQuantity({
+        id: item.id,
+        quantity: item.quantity + 1,
+      })
+    );
+  };
+
+  const handleDecrement = (item) => {
+    if (item.quantity > 1) {
+      dispatch(
+        updateQuantity({
+          id: item.id,
+          quantity: item.quantity - 1,
+        })
+      );
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -29,13 +52,53 @@ const Cart = () => {
 
           {cartItems.map((item) => (
             <div className="cart-item" key={item.id}>
-              <img className="cart-item-image" src={item.image} alt={item.title} />
+              <img
+                className="cart-item-image"
+                src={item.image}
+                alt={item.title}
+              />
+
               <div className="cart-item-details">
                 <h3 className="cart-item-title">{item.title}</h3>
-                <p className="cart-item-price">Price: ₹ {item.price}</p>
-                <p className="cart-item-quantity">Quantity: {item.quantity}</p>
+
+                <div className="cart-quantity-section">
+                  <span className="cart-quantity-label">Quantity</span>
+
+                  <div className="cart-quantity-selector">
+                    <button
+                      className="cart-quantity-btn"
+                      onClick={() => handleDecrement(item)}
+                      disabled={item.quantity === 1}
+                    >
+                      -
+                    </button>
+
+                    <input
+                      type="text"
+                      className="cart-quantity-input"
+                      value={item.quantity}
+                      readOnly
+                    />
+
+                    <button
+                      className="cart-quantity-btn"
+                      onClick={() => handleIncrement(item)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <p className="cart-item-price">Price: Rs. {item.price}</p>
+                <p className="cart-item-quantity">
+                  Subtotal: Rs. {item.price * item.quantity}
+                </p>
               </div>
-              <button className="cart-remove-btn" onClick={() => dispatch(removeFromCart(item.id))}>
+
+              <button
+                className="cart-remove-btn"
+                onClick={() => dispatch(removeFromCart(item.id))}
+              >
                 Remove
               </button>
             </div>
@@ -44,8 +107,11 @@ const Cart = () => {
 
         <div className="cart-summary">
           <h3 className="cart-summary-title">Order Summary</h3>
-          <p className="cart-summary-total">Total: ₹ {totalPrice}</p>
-          <button className="cart-checkout-btn" onClick={() => navigate("/checkout")}>
+          <p className="cart-summary-total">Total: Rs. {totalPrice}</p>
+          <button
+            className="cart-checkout-btn"
+            onClick={() => navigate("/checkout")}
+          >
             Proceed to Checkout
           </button>
         </div>
