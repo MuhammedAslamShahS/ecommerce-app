@@ -1,21 +1,33 @@
 import "./ProductDetails.css";
 import { useEffect, useState } from "react";
 import { getProductId } from "../../ApiService/Api";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { setOrderData } from "../../orderSlice";
 import { addToCart } from "../../cartSlice";
 
 const ProductDetails = () => {
+    // Router hooks
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
+
+    // Redux hooks
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
     // Fetched product details temporarily stored
     const [productDetails, setProductDetails] = useState({});
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [showCartPrompt, setShowCartPrompt] = useState(false);
+
+    // If user is not logged in, send them to login page
+    // and keep the current page in state for redirect after login
+
+    const requireLogin = () => {
+        navigate("/login", { state: { from: location } });
+    };
 
     // Fetching product details based on id
     useEffect(() => {
@@ -45,24 +57,36 @@ const ProductDetails = () => {
         navigate("/checkout");
     };
 
-    // Handle Buy Now - Dispatch to Redux and Navigate
+    //  Buy Now should work only for logged-in users
     const handleBuyNow = () => {
+        if (!isAuthenticated) {
+            requireLogin();
+            return;
+        }
+
         setShowCartPrompt(false);
         startCheckout();
     };
 
-    // Quantity management
+    // Quantity management : Increase quantity
     const handleIncrement = () => {
         setQuantity(quantity + 1);
     };
 
+    // Decrease quantity but do not allow below 1
     const handleDecrement = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
         }
     };
 
+    // Add to Cart should work only for logged-in users
     const handleAddToCart = () => {
+        if (!isAuthenticated) {
+            requireLogin();
+            return;
+        }
+
         dispatch(
             addToCart({
                 product: productDetails,
@@ -72,12 +96,13 @@ const ProductDetails = () => {
         setShowCartPrompt(true);
     };
 
+    // Move user to cart page
     const handleGoToCart = () => {
         setShowCartPrompt(false);
         navigate("/cart");
     };
 
-    // Loading state
+    // Loading state (UI)
     if (loading) {
         return <div className="product-loading">Loading product details...</div>;
     }
