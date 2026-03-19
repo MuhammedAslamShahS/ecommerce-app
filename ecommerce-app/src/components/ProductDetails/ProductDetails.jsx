@@ -4,6 +4,7 @@ import { getProductId } from "../../ApiService/Api";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setOrderData } from "../../orderSlice";
+import { addToCart } from "../../cartSlice";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -14,6 +15,7 @@ const ProductDetails = () => {
     const [productDetails, setProductDetails] = useState({});
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [showCartPrompt, setShowCartPrompt] = useState(false);
 
     // Fetching product details based on id
     useEffect(() => {
@@ -32,8 +34,8 @@ const ProductDetails = () => {
         fetchProductDetails();
     }, [id]);
 
-    // Handle Buy Now - Dispatch to Redux and Navigate
-    const handleBuyNow = () => {
+    // Send the selected product directly to checkout
+    const startCheckout = () => {
         dispatch(
             setOrderData({
                 product: productDetails,
@@ -41,6 +43,12 @@ const ProductDetails = () => {
             }),
         );
         navigate("/checkout");
+    };
+
+    // Handle Buy Now - Dispatch to Redux and Navigate
+    const handleBuyNow = () => {
+        setShowCartPrompt(false);
+        startCheckout();
     };
 
     // Quantity management
@@ -52,6 +60,21 @@ const ProductDetails = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
         }
+    };
+
+    const handleAddToCart = () => {
+        dispatch(
+            addToCart({
+                product: productDetails,
+                quantity,
+            }),
+        );
+        setShowCartPrompt(true);
+    };
+
+    const handleGoToCart = () => {
+        setShowCartPrompt(false);
+        navigate("/cart");
     };
 
     // Loading state
@@ -105,7 +128,6 @@ const ProductDetails = () => {
                         <div className="savings-info">You save ₹ {discountAmount}</div>
                     </div>
 
-
                     {/* QUANTITY SELECTOR */}
                     <div className="quantity-section">
                         <label className="quantity-label">Select Quantity:</label>
@@ -127,15 +149,33 @@ const ProductDetails = () => {
 
                     {/* ACTION BUTTONS */}
                     <div className="action-buttons">
-                        <button className="btn btn-add-to-cart" onClick={() => alert("Added to cart!")}>
+                        <button className="btn btn-add-to-cart" onClick={handleAddToCart}>
                             🛒 ADD TO CART
                         </button>
+
                         <button className="btn btn-buy-now" onClick={handleBuyNow}>
                             ⚡ BUY NOW
                         </button>
                     </div>
                 </div>
             </div>
+
+            {showCartPrompt && (
+                <div className="cart-action-popup-overlay" onClick={() => setShowCartPrompt(false)}>
+                    <div className="cart-action-popup" onClick={(event) => event.stopPropagation()}>
+                        <h3 className="cart-action-popup-title">Item added to cart</h3>
+                        <p className="cart-action-popup-text">Choose what you want to do next.</p>
+                        <div className="cart-action-popup-actions">
+                            <button className="cart-action-btn cart-action-btn-primary" onClick={handleBuyNow}>
+                                Proceed to Buy
+                            </button>
+                            <button className="cart-action-btn cart-action-btn-secondary" onClick={handleGoToCart}>
+                                Go to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
