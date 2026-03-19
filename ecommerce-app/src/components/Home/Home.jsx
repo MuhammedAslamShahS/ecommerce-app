@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Home.css";
-import { getAllProducts } from "../../ApiService/Api";
+import { getAllProducts } from "../../ApiService/api";
 import { Link } from "react-router-dom";
 
 const Home = () => {

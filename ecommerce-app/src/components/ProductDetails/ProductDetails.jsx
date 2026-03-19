@@ -1,6 +1,6 @@
 import "./ProductDetails.css";
 import { useEffect, useState } from "react";
-import { getProductId } from "../../ApiService/Api";
+import { getProductId } from "../../ApiService/api";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setOrderData } from "../../orderSlice";
