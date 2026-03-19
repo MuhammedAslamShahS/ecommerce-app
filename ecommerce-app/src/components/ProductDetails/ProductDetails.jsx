@@ -10,23 +10,29 @@ const ProductDetails = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    // fetched product details temperley store before add/show to component
+    // Fetched product details temporarily stored
     const [productDetails, setProductDetails] = useState({});
-
-    // quantity managing
     const [quantity, setQuantity] = useState(1);
+    const [loading, setLoading] = useState(true);
 
-    // fetching product details based each id
+    // Fetching product details based on id
     useEffect(() => {
         const fetchProductDetails = async () => {
-            const data = await getProductId(id);
-            setProductDetails(data);
+            try {
+                setLoading(true);
+                const data = await getProductId(id);
+                setProductDetails(data);
+            } catch (error) {
+                console.error("Error fetching product:", error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchProductDetails();
     }, [id]);
 
-    
+    // Handle Buy Now - Dispatch to Redux and Navigate
     const handleBuyNow = () => {
         dispatch(
             setOrderData({
@@ -34,12 +40,10 @@ const ProductDetails = () => {
                 quantity: quantity,
             }),
         );
-
-        // all data going to checkout page
         navigate("/checkout");
     };
 
-    //quantity managing
+    // Quantity management
     const handleIncrement = () => {
         setQuantity(quantity + 1);
     };
@@ -50,66 +54,87 @@ const ProductDetails = () => {
         }
     };
 
+    // Loading state
+    if (loading) {
+        return <div className="product-loading">Loading product details...</div>;
+    }
+
+    // Calculate discount and savings
+    const originalPrice = productDetails.price * 2;
+    const discountAmount = originalPrice - productDetails.price;
+    const discountPercentage = Math.round((discountAmount / originalPrice) * 100);
+
     return (
-        // main wrapper
-        <div className="product-container-wrapper">
-            {/* left section */}
-            <img src={productDetails.image} alt="alternative" className="left-section-img" />
+        <div className="product-page-container">
+            {/* BREADCRUMB / BACK BUTTON */}
+            <div className="breadcrumb-section">
+                <Link to="/" className="back-link">
+                    ← Back to Products
+                </Link>
+            </div>
 
-            {/* right section */}
-            <div className="right-section" style={{ fontFamily: "sans-serif" }}>
-                <h2 className="product-title">{productDetails.title}</h2>
-                <p className="product-discription">{productDetails.descriptio}</p>
-                <p className="product-price" style={{ fontSize: "32px" }}>
-                    <span>{`-50%`}</span> <span style={{ color: "black" }}> ₹ {productDetails.price}</span>
-                </p>
-
-                <p style={{ fontSize: "14px", marginLeft: "8px", color: "gray" }}>M.R.P: {productDetails.price * 2}</p>
-
-                {/* Quantity managing */}
-                <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <button
-                        onClick={handleDecrement}
-                        style={{
-                            padding: "8px 15px",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            border: "1px solid #ddd",
-                            borderRadius: "4px",
-                        }}
-                    >
-                        -
-                    </button>
-                    <span
-                        style={{
-                            fontSize: "18px",
-                            fontWeight: "bold",
-                            minWidth: "30px",
-                            textAlign: "center",
-                        }}
-                    >
-                        {quantity}
-                    </span>
-                    <button
-                        onClick={handleIncrement}
-                        style={{
-                            padding: "8px 15px",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            border: "1px solid #ddd",
-                            borderRadius: "4px",
-                        }}
-                    >
-                        +
-                    </button>
+            {/* MAIN PRODUCT CONTAINER */}
+            <div className="product-container-wrapper">
+                {/* LEFT SECTION - PRODUCT IMAGE */}
+                <div className="product-image-section">
+                    <div className="image-container">
+                        <img src={productDetails.image} alt={productDetails.title} className="product-image" />
+                        {discountPercentage > 0 && <div className="discount-badge">-{discountPercentage}%</div>}
+                    </div>
                 </div>
 
-                <button className="product-buynow" onClick={handleBuyNow} style={{ border: "none" }}>
-                    BuyNow
-                </button>
-                <Link to="/">
-                    <button className="explore-more">explore more</button>
-                </Link>
+                {/* RIGHT SECTION - PRODUCT DETAILS */}
+                <div className="product-details-section">
+                    {/* PRODUCT HEADER */}
+                    <div className="product-header">
+                        <h1 className="product-title">{productDetails.title}</h1>
+
+                        {/* RATING SECTION */}
+                        <div className="rating-section">
+                            <div className="stars">⭐⭐⭐⭐⭐</div>
+                            <span className="rating-text">4.5/5 (324 Reviews)</span>
+                        </div>
+                    </div>
+
+                    {/* PRICE SECTION */}
+                    <div className="price-section">
+                        <div className="price-display">
+                            <span className="current-price">₹ {productDetails.price}</span>
+                            <span className="original-price">₹ {originalPrice}</span>
+                        </div>
+                        <div className="savings-info">You save ₹ {discountAmount}</div>
+                    </div>
+
+
+                    {/* QUANTITY SELECTOR */}
+                    <div className="quantity-section">
+                        <label className="quantity-label">Select Quantity:</label>
+                        <div className="quantity-selector">
+                            <button
+                                className="quantity-btn decrement-btn"
+                                onClick={handleDecrement}
+                                disabled={quantity === 1}
+                            >
+                                −
+                            </button>
+                            <input type="text" className="quantity-input" value={quantity} readOnly />
+                            <button className="quantity-btn increment-btn" onClick={handleIncrement}>
+                                +
+                            </button>
+                        </div>
+                        <span className="stock-available">Stock Available: 50</span>
+                    </div>
+
+                    {/* ACTION BUTTONS */}
+                    <div className="action-buttons">
+                        <button className="btn btn-add-to-cart" onClick={() => alert("Added to cart!")}>
+                            🛒 ADD TO CART
+                        </button>
+                        <button className="btn btn-buy-now" onClick={handleBuyNow}>
+                            ⚡ BUY NOW
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
