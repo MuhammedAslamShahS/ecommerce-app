@@ -6,7 +6,7 @@ const Header = () => {
         <div className="header-container">
             <header className="header">
                 <Link to="/" style={{ textDecoration: "none", color: "#ff5722" }}>
-                    <h1 className="header-h1">Store</h1>
+                    <h1 className="header-h1">STORE</h1>
                 </Link>
 
                 <Link to="/logout">

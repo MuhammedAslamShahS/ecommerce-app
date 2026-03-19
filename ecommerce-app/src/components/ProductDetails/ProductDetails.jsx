@@ -6,8 +6,13 @@ import { Link, useParams } from "react-router-dom";
 const ProductDetails = () => {
     const { id } = useParams();
 
+    // fetched product details temperley store before add/show to component
     const [productDetails, setProductDetails] = useState({});
 
+    // quantity managing
+    const [quantity, setQuantity] = useState(1);
+
+    // fetching product details based each id
     useEffect(() => {
         const fetchProductDetails = async () => {
             const data = await getProductId(id);
@@ -16,6 +21,21 @@ const ProductDetails = () => {
 
         fetchProductDetails();
     }, [id]);
+
+    const handleBuyNow = () => {
+        window.confirm("Buy now testing successfully worked...!");
+    };
+
+    //quantity managing
+    const handleIncrement = () => {
+        setQuantity(quantity + 1);
+    };
+
+    const handleDecrement = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
 
     return (
         // main wrapper
@@ -28,14 +48,52 @@ const ProductDetails = () => {
                 <h2 className="product-title">{productDetails.title}</h2>
                 <p className="product-discription">{productDetails.descriptio}</p>
                 <p className="product-price" style={{ fontSize: "32px" }}>
-                    <span>{`-50%`}</span> <span style={{color: "black"}}> ₹ {productDetails.price}</span>
+                    <span>{`-50%`}</span> <span style={{ color: "black" }}> ₹ {productDetails.price}</span>
                 </p>
 
-                <p style={{ fontSize: "14px", marginLeft: "8px", color: "gray" }}>
-                    M.R.P: {productDetails.price * 2}
-                </p>
+                <p style={{ fontSize: "14px", marginLeft: "8px", color: "gray" }}>M.R.P: {productDetails.price * 2}</p>
 
-                <button className="product-buynow">BuyNow</button>
+                {/* Quantity managing */}
+                <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+                    <button
+                        onClick={handleDecrement}
+                        style={{
+                            padding: "8px 15px",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            border: "1px solid #ddd",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        -
+                    </button>
+                    <span
+                        style={{
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            minWidth: "30px",
+                            textAlign: "center",
+                        }}
+                    >
+                        {quantity}
+                    </span>
+                    <button
+                        onClick={handleIncrement}
+                        style={{
+                            padding: "8px 15px",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            border: "1px solid #ddd",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        +
+                    </button>
+                </div>
+
+                <button className="product-buynow" onClick={handleBuyNow} style={{border: "none"}}>
+                    BuyNow
+                </button>
                 <Link to="/">
                     <button className="explore-more">explore more</button>
                 </Link>
