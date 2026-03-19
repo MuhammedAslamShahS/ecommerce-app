@@ -1,10 +1,14 @@
 import "./ProductDetails.css";
 import { useEffect, useState } from "react";
 import { getProductId } from "../../ApiService/Api";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setOrderData } from "../../orderSlice";
 
 const ProductDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     // fetched product details temperley store before add/show to component
     const [productDetails, setProductDetails] = useState({});
@@ -22,8 +26,17 @@ const ProductDetails = () => {
         fetchProductDetails();
     }, [id]);
 
+    
     const handleBuyNow = () => {
-        window.confirm("Buy now testing successfully worked...!");
+        dispatch(
+            setOrderData({
+                product: productDetails,
+                quantity: quantity,
+            }),
+        );
+
+        // all data going to checkout page
+        navigate("/checkout");
     };
 
     //quantity managing
@@ -91,7 +104,7 @@ const ProductDetails = () => {
                     </button>
                 </div>
 
-                <button className="product-buynow" onClick={handleBuyNow} style={{border: "none"}}>
+                <button className="product-buynow" onClick={handleBuyNow} style={{ border: "none" }}>
                     BuyNow
                 </button>
                 <Link to="/">
