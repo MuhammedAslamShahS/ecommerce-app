@@ -1,87 +1,106 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { clearCart } from "../../cartSlice";
 import { setPaymentMethod, clearOrder } from "../../orderSlice";
+import { toast } from "react-toastify";
 import "./Checkout.css";
 
 const Checkout = () => {
-    // Get order data from Redux through from ProductDetails page
     const order = useSelector((state) => state.order);
-
-    // initialise hooks
+    const cartItems = useSelector((state) => state.cart.items);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [selectedPayment, setSelectedPayment] = useState(order.paymentMethod || null);
 
-    // Local state for selected payment method user selection based
-    const [selectedPayment, setSelectedPayment] = useState(null);
+    const isSingleProductCheckout = Boolean(order.product);
+    const checkoutItems = isSingleProductCheckout
+        ? [
+              {
+                  id: order.product.id ?? "direct-order",
+                  title: order.product.title,
+                  image: order.product.image,
+                  price: order.product.price,
+                  quantity: order.quantity,
+              },
+          ]
+        : cartItems;
 
-    // Handle payment method selection based from user side
+    const totalPrice = isSingleProductCheckout
+        ? order.totalPrice
+        : checkoutItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
     const handlePaymentSelect = (method) => {
         setSelectedPayment(method);
         dispatch(setPaymentMethod(method));
     };
 
-    // hanlde place order
     const handlePlaceOrder = () => {
         if (!selectedPayment) {
-            alert("Please select a payment method");
+            toast.error("Please select a payment method.");
             return;
         }
 
-        // Here you would send data to backend API
-        alert(`Order placed successfully with ${selectedPayment}!`);
+        toast.success(`Order placed successfully with ${selectedPayment.toUpperCase()}.`);
 
-        // Clear order from Redux
+        if (!isSingleProductCheckout) {
+            dispatch(clearCart());
+        }
+
         dispatch(clearOrder());
-
-        // Redirect to home
         navigate("/");
     };
 
-    // If no order data, redirect to home
-    if (!order.product) {
+    if (checkoutItems.length === 0) {
         return (
             <div className="checkout-container">
-                <p>No items in cart, Redirecting...</p>
+                <div className="checkout-summary checkout-empty-state">
+                    <h2>No items available for checkout</h2>
+                    <p>Add products to your cart or use Buy Now from a product page.</p>
+                    <button className="back-btn" onClick={() => navigate("/")}>
+                        Continue Shopping
+                    </button>
+                </div>
             </div>
         );
     }
+
     return (
         <div className="checkout-container">
-            {/* LEFT section - Order Summary */}
             <div className="checkout-summary">
                 <h2>Order Summary</h2>
 
-                {/* Product Image */}
-                <div className="summary-product-image">
-                    <img src={order.product.image} alt={order.product.title} />
+                <div className="checkout-items">
+                    {checkoutItems.map((item) => (
+                        <div className="checkout-summary-item" key={item.id}>
+                            <div className="summary-product-image">
+                                <img src={item.image} alt={item.title} />
+                            </div>
+
+                            <div className="summary-details">
+                                <h3 className="summary-title">{item.title}</h3>
+                                <p className="summary-price">Price: Rs. {item.price}</p>
+                                <p className="summary-quantity">Quantity: {item.quantity}</p>
+                                <p className="summary-line-total">Subtotal: Rs. {item.price * item.quantity}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Product Details */}
-                <div className="summary-details">
-                    <h2 className="summary-title">{order.product.title}</h2>
-                    <p className="summary-price">Price: $ {order.product.price}</p>
-                    <p className="sumamry-quantity">Quantity: {order.quantity}</p>
-                    <hr />
-                    <p>
-                        <strong>Total: ${order.totalPrice}</strong>
-                    </p>
-                </div>
+                <hr className="summary-divider" />
+                <p className="summary-total">
+                    <strong>Total: Rs. {totalPrice}</strong>
+                </p>
             </div>
 
-            {/* RIGHT section - payment methods section */}
             <div className="checkout-payment">
                 <h2>Select Payment Method</h2>
 
-                {/* COD - Cash on delivery */}
-                <div
-                    className={`payment-option ${selectedPayment === "cod" ? "selected" : ""}`}
-                    onClick={() => handlePaymentSelect("cod")}
-                >
+                <label className={`payment-option ${selectedPayment === "cod" ? "selected" : ""}`}>
                     <input
                         type="radio"
                         name="payment"
-                        id="cod"
+                        value="cod"
                         checked={selectedPayment === "cod"}
                         onChange={() => handlePaymentSelect("cod")}
                     />
@@ -89,15 +108,11 @@ const Checkout = () => {
                         <h4>Cash on Delivery</h4>
                         <p>Pay when your order arrives</p>
                     </div>
-                </div>
+                </label>
 
-                {/* UPI - payment methods section */}
-                <div
-                    className={`payment-option ${selectedPayment === "upi" ? "selected" : ""}`}
-                    onClick={() => handlePaymentSelect("upi")}
-                >
+                <label className={`payment-option ${selectedPayment === "upi" ? "selected" : ""}`}>
                     <input
-                        type="text"
+                        type="radio"
                         name="payment"
                         value="upi"
                         checked={selectedPayment === "upi"}
@@ -105,35 +120,28 @@ const Checkout = () => {
                     />
                     <div className="payment-content">
                         <h4>UPI</h4>
-                        <p>pay instantly using UPI apps</p>
+                        <p>Pay instantly using your UPI app</p>
                     </div>
-                </div>
+                </label>
 
-                {/* CARD - Credit/Debit Card */}
-                <div
-                    className={`payment-option ${selectedPayment === "card" ? "selected" : ""}`}
-                    onClick={() => handlePaymentSelect("card")}
-                >
+                <label className={`payment-option ${selectedPayment === "card" ? "selected" : ""}`}>
                     <input
-                        type="text"
+                        type="radio"
                         name="payment"
                         value="card"
                         checked={selectedPayment === "card"}
                         onChange={() => handlePaymentSelect("card")}
                     />
-
                     <div className="payment-content">
                         <h4>Credit / Debit Card</h4>
-                        <p>Pay using your card securely</p>
+                        <p>Pay securely using your card</p>
                     </div>
-                </div>
+                </label>
 
-                {/* Place Order Business */}
                 <button className="place-order-btn" onClick={handlePlaceOrder}>
                     Place Order
                 </button>
 
-                {/* Back Button */}
                 <button className="back-btn" onClick={() => navigate(-1)}>
                     Back
                 </button>
@@ -141,4 +149,5 @@ const Checkout = () => {
         </div>
     );
 };
+
 export default Checkout;

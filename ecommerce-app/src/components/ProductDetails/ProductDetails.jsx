@@ -5,6 +5,7 @@ import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setOrderData } from "../../orderSlice";
 import { addToCart } from "../../cartSlice";
+import { toast } from "react-toastify";
 
 const ProductDetails = () => {
     // Router hooks
@@ -26,6 +27,7 @@ const ProductDetails = () => {
     // and keep the current page in state for redirect after login
 
     const requireLogin = () => {
+        toast.info("Please log in to continue.");
         navigate("/login", { state: { from: location } });
     };
 
@@ -38,6 +40,7 @@ const ProductDetails = () => {
                 setProductDetails(data);
             } catch (error) {
                 console.error("Error fetching product:", error);
+                toast.error("Unable to load product details.");
             } finally {
                 setLoading(false);
             }
@@ -93,6 +96,7 @@ const ProductDetails = () => {
                 quantity,
             }),
         );
+        toast.success("Item added to cart.");
         setShowCartPrompt(true);
     };
 

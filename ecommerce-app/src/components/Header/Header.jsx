@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import "./Header.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Header = () => {
-    const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const cartItems = useSelector((state) => state.cart.items);
-    const { isAuthenticated, user } = useSelector((state) => state.auth);
+    const cartItems = useSelector((state) => state.cart?.items ?? []);
+    const { isAuthenticated = false, user = null } = useSelector((state) => state.auth ?? {});
 
     const totalCartCount = cartItems.reduce((total, item) => {
-        return total + item.quantity;
+        return total + (Number(item?.quantity) || 0);
     }, 0);
 
     const userInitial = user?.email?.charAt(0)?.toUpperCase() || "U";
 
-    useEffect(() => {
+    const closeMenus = () => {
         setIsMenuOpen(false);
         setIsProfileOpen(false);
-    }, [location.pathname]);
+    };
 
     const handleMenuToggle = () => {
         setIsMenuOpen((currentValue) => !currentValue);
+        setIsProfileOpen(false);
     };
 
     const handleProfileToggle = () => {
@@ -33,7 +33,7 @@ const Header = () => {
         <div className="header-container">
             <header className="header">
                 <div className="header-brand-row">
-                    <Link to="/" className="header-brand-link">
+                    <Link to="/" className="header-brand-link" onClick={closeMenus}>
                         <h1 className="header-h1">STORE</h1>
                     </Link>
 
@@ -51,7 +51,7 @@ const Header = () => {
                 </div>
 
                 <div className={`header-actions ${isMenuOpen ? "header-actions-open" : ""}`}>
-                    <Link to="/cart" className="header-cart-link">
+                    <Link to="/cart" className="header-cart-link" onClick={closeMenus}>
                         <span>Cart</span>
                         <span className="header-cart-count">{totalCartCount}</span>
                     </Link>
@@ -71,14 +71,14 @@ const Header = () => {
                             {isProfileOpen ? (
                                 <div className="header-profile-menu">
                                     <p className="header-profile-email">{user?.email || "Signed in user"}</p>
-                                    <Link to="/logout" className="header-profile-link">
+                                    <Link to="/logout" className="header-profile-link" onClick={closeMenus}>
                                         Log Out
                                     </Link>
                                 </div>
                             ) : null}
                         </div>
                     ) : (
-                        <Link to="/login" className="header-login-btn">
+                        <Link to="/login" className="header-login-btn" onClick={closeMenus}>
                             Log In
                         </Link>
                     )}

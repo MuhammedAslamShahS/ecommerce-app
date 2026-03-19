@@ -1,7 +1,9 @@
 import "./Cart.css";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, updateQuantity } from "../../cartSlice";
+import { clearOrder } from "../../orderSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -31,6 +33,17 @@ const Cart = () => {
         })
       );
     }
+  };
+
+  const handleCheckout = () => {
+    dispatch(clearOrder());
+    toast.info("Proceeding to checkout.");
+    navigate("/checkout");
+  };
+
+  const handleRemoveItem = (itemId) => {
+    dispatch(removeFromCart(itemId));
+    toast.info("Item removed from cart.");
   };
 
   if (cartItems.length === 0) {
@@ -97,7 +110,7 @@ const Cart = () => {
 
               <button
                 className="cart-remove-btn"
-                onClick={() => dispatch(removeFromCart(item.id))}
+                onClick={() => handleRemoveItem(item.id)}
               >
                 Remove
               </button>
@@ -110,7 +123,7 @@ const Cart = () => {
           <p className="cart-summary-total">Total: Rs. {totalPrice}</p>
           <button
             className="cart-checkout-btn"
-            onClick={() => navigate("/checkout")}
+            onClick={handleCheckout}
           >
             Proceed to Checkout
           </button>
