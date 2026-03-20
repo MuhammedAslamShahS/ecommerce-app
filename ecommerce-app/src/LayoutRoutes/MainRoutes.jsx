@@ -9,36 +9,39 @@ import Cart from "../components/Cart/Cart";
 import Login from "../components/Login/Login";
 import SignUp from "../components/SignUp/SignUp";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
+import Products from "../pages/Products/Products";
+import ScrollToTop from "../components/ScrollToTop";
 
 const MainRoutes = ({ homeTopContent = null }) => {
-  const location = useLocation();
+    const location = useLocation();
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* Common header */}
-      <Header key={location.pathname} />
+    return (
+        <div className="min-h-screen flex flex-col">
+            <ScrollToTop /> {/* Scroll page to top on every route change */}
+            {/* Common header */}
+            <Header key={location.pathname} />
+            {location.pathname === "/" ? homeTopContent : null}
+            <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Home />} />
 
-      {location.pathname === "/" ? homeTopContent : null}
+                <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:category" element={<Products />} />
+                <Route path="/signup" element={<SignUp />} />
 
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-
-        {/* Protected routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/logout" element={<LogOut />} />
-        </Route>
-      </Routes>
-
-      {/* Common footer */}
-      <Footer />
-    </div>
-  );
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/logout" element={<LogOut />} />
+                </Route>
+            </Routes>
+            {/* Common footer */}
+            <Footer />
+        </div>
+    );
 };
 
 export default MainRoutes;

@@ -8,29 +8,29 @@ const Footer = () => {
 
             {/* 2nd Box */}
             <div className="footer-main-block">
-                <div class="footer-grid">
-                    <div class="footer-column">
+                <div className="footer-grid">
+                    <div className="footer-column">
                         <h4>Get to Know Us</h4>
                         <p>About Amazon</p>
                         <p>Careers</p>
                         <p>Press Releases</p>
                     </div>
 
-                    <div class="footer-column">
+                    <div className="footer-column">
                         <h4>Connect with Us</h4>
                         <p>Facebook</p>
                         <p>Twitter</p>
                         <p>Instagram</p>
                     </div>
 
-                    <div class="footer-column">
+                    <div className="footer-column">
                         <h4>Make Money with Us</h4>
                         <p>Sell on Amazon</p>
                         <p>Affiliate</p>
                         <p>Advertise Products</p>
                     </div>
 
-                    <div class="footer-column">
+                    <div className="footer-column">
                         <h4>Let Us Help You</h4>
                         <p>Your Account</p>
                         <p>Returns</p>
