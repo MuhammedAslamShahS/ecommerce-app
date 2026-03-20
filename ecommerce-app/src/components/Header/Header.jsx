@@ -1,169 +1,371 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
+import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
+import Badge from "@mui/material/Badge";
+import BottomNavigation from "@mui/material/BottomNavigation";
+import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import SvgIcon from "@mui/material/SvgIcon";
+import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-const CartIcon = (props) => (
-    <SvgIcon {...props} viewBox="0 0 24 24">
-        <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 9 21.1 9 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59 5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63 8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 19 21.1 19 20 18.1 18 17 18Z" />
-    </SvgIcon>
-);
-
 const Header = () => {
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [profileAnchorEl, setProfileAnchorEl] = useState(null);
+    const [searchValue, setSearchValue] = useState("");
     const cartItems = useSelector((state) => state.cart?.items ?? []);
     const { isAuthenticated = false, user = null } = useSelector((state) => state.auth ?? {});
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const cartCount = cartItems.reduce((total, item) => total + (Number(item?.quantity) || 0), 0);
     const userInitial = user?.email?.charAt(0)?.toUpperCase() || "U";
     const userName = user?.email || "Signed in user";
 
-    const handleOpenMenu = (event) => {
-        setAnchorEl(event.currentTarget);
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        setSearchValue(params.get("search") ?? "");
+    }, [location.search]);
+
+    const closeProfileMenu = () => {
+        setProfileAnchorEl(null);
     };
 
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
+    const openProfileMenu = (event) => {
+        setProfileAnchorEl(event.currentTarget);
     };
+
+    const handleProfileClick = (event) => {
+        if (isAuthenticated) {
+            openProfileMenu(event);
+            return;
+        }
+
+        navigate("/login");
+    };
+
+    const handleSearchSubmit = (event) => {
+        event.preventDefault();
+
+        const nextSearchValue = searchValue.trim();
+        const params = new URLSearchParams();
+
+        if (nextSearchValue) {
+            params.set("search", nextSearchValue);
+        }
+
+        navigate({
+            pathname: "/",
+            search: params.toString() ? `?${params.toString()}` : "",
+        });
+    };
+
+    const mobileNavValue = location.pathname.startsWith("/cart")
+        ? "cart"
+        : location.pathname.startsWith("/login") || location.pathname.startsWith("/logout")
+          ? "profile"
+          : "home";
 
     return (
-        <Box
-            sx={{
-                position: "sticky",
-                top: 0,
-                zIndex: (theme) => theme.zIndex.appBar,
-                px: { xs: 1.5, sm: 2.5 },
-                py: 2,
-                background: "linear-gradient(180deg, rgba(255,247,243,0.96) 0%, rgba(255,247,243,0.82) 70%, rgba(255,247,243,0) 100%)",
-                backdropFilter: "blur(8px)",
-            }}
-        >
-            <AppBar
-                position="static"
-                color="transparent"
+        <>
+            <Box
                 elevation={0}
                 sx={{
-                    border: "1px solid #ffe2d6",
-                    borderRadius: 4,
-                    backgroundColor: "#ffffff",
-                    color: "#4a342b",
-                    boxShadow: "0 10px 30px rgba(255, 87, 34, 0.08)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: (theme) => theme.zIndex.appBar,
+                    px: { xs: 1, sm: 2, md: 2.5 },
+                    py: 1.5,
+                    background: "linear-gradient(180deg, rgba(255,247,243,0.96) 0%, rgba(255,247,243,0.82) 72%, rgba(255,247,243,0) 100%)",
+                    backdropFilter: "blur(10px)",
                 }}
             >
-                <Toolbar sx={{ minHeight: 72, gap: 1.5, px: { xs: 2, sm: 3 } }}>
-                    <Typography
-                        component={Link}
-                        to="/"
+                <AppBar
+                    position="static"
+                    color="transparent"
+                    elevation={0}
+                    sx={{
+                        border: "1px solid #ffe2d6",
+                        borderRadius: 4,
+                        backgroundColor: "#ffffff",
+                        color: "#2f241f",
+                        boxShadow: "0 12px 32px rgba(255, 87, 34, 0.08)",
+                    }}
+                >
+                    <Toolbar
                         sx={{
-                            flexGrow: 1,
-                            color: "#ff5722",
-                            fontSize: { xs: 22, sm: 26 },
-                            fontWeight: 800,
-                            letterSpacing: "0.08em",
-                            textDecoration: "none",
+                            minHeight: { xs: 74, md: 78 },
+                            px: { xs: 1.5, sm: 2.5 },
+                            py: { xs: 1.25, md: 0.75 },
+                            gap: 1.25,
+                            flexWrap: { xs: "wrap", md: "nowrap" },
                         }}
                     >
-                        STORE
-                    </Typography>
-
-                    <Button
-                        component={Link}
-                        to="/cart"
-                        variant="outlined"
-                        startIcon={<CartIcon sx={{ fontSize: 20 }} />}
-                        sx={{
-                            borderColor: "#ffd6c8",
-                            borderRadius: 999,
-                            color: "#4a342b",
-                            textTransform: "none",
-                            fontWeight: 700,
-                        }}
-                    >
-                        Cart ({cartCount})
-                    </Button>
-
-                    {isAuthenticated ? (
-                        <>
-                            <Button
-                                onClick={handleOpenMenu}
-                                sx={{
-                                    minWidth: 0,
-                                    px: 1,
-                                    borderRadius: 999,
-                                    color: "#4a342b",
-                                    textTransform: "none",
-                                    gap: 1,
-                                }}
-                            >
-                                <Avatar
-                                    sx={{
-                                        width: 34,
-                                        height: 34,
-                                        fontSize: 14,
-                                        fontWeight: 700,
-                                        bgcolor: "#ff5722",
-                                    }}
-                                >
-                                    {userInitial}
-                                </Avatar>
-                                <Typography
-                                    sx={{
-                                        display: { xs: "none", sm: "block" },
-                                        maxWidth: 140,
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    {userName}
-                                </Typography>
-                            </Button>
-
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleCloseMenu}
-                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                transformOrigin={{ vertical: "top", horizontal: "right" }}
-                            >
-                                <MenuItem disabled sx={{ opacity: "1 !important" }}>
-                                    {userName}
-                                </MenuItem>
-                                <MenuItem component={Link} to="/logout" onClick={handleCloseMenu}>
-                                    Log Out
-                                </MenuItem>
-                            </Menu>
-                        </>
-                    ) : (
-                        <Button
+                        <Box
                             component={Link}
-                            to="/login"
-                            variant="contained"
+                            to="/"
                             sx={{
-                                borderRadius: 999,
-                                bgcolor: "#ff5722",
-                                textTransform: "none",
-                                fontWeight: 700,
-                                "&:hover": {
-                                    bgcolor: "#e64a19",
-                                },
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                textDecoration: "none",
+                                color: "inherit",
+                                minWidth: "fit-content",
                             }}
                         >
-                            Log In
-                        </Button>
-                    )}
-                </Toolbar>
-            </AppBar>
-        </Box>
+                            <StorefrontRoundedIcon sx={{ color: "#ff5722", fontSize: 28 }} />
+                            <Typography
+                                sx={{
+                                    color: "#ff5722",
+                                    fontSize: { xs: 21, sm: 24 },
+                                    fontWeight: 800,
+                                    letterSpacing: "0.08em",
+                                }}
+                            >
+                                STORE
+                            </Typography>
+                        </Box>
+
+                        <Box
+                            component="form"
+                            onSubmit={handleSearchSubmit}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                flex: { md: 1 },
+                                width: { xs: "100%", md: "auto" },
+                                order: { xs: 3, md: 0 },
+                                mt: { xs: 0.5, md: 0 },
+                                ml: { md: 1 },
+                            }}
+                        >
+                            <Paper
+                                variant="outlined"
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flex: 1,
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: 999,
+                                    borderColor: "#ffd9cd",
+                                    bgcolor: "#fff7f3",
+                                    boxShadow: "none",
+                                }}
+                            >
+                                <SearchRoundedIcon sx={{ color: "#ff5722", fontSize: 22 }} />
+                                <InputBase
+                                    value={searchValue}
+                                    onChange={(event) => setSearchValue(event.target.value)}
+                                    placeholder="Search products"
+                                    inputProps={{ "aria-label": "Search products" }}
+                                    sx={{
+                                        ml: 1,
+                                        flex: 1,
+                                        fontSize: 15,
+                                    }}
+                                />
+                            </Paper>
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                startIcon={<SearchRoundedIcon />}
+                                sx={{
+                                    display: { xs: "none", sm: "inline-flex" },
+                                    borderRadius: 999,
+                                    bgcolor: "#ff5722",
+                                    px: 2,
+                                    textTransform: "none",
+                                    fontWeight: 700,
+                                    boxShadow: "none",
+                                    "&:hover": {
+                                        bgcolor: "#e64a19",
+                                        boxShadow: "none",
+                                    },
+                                }}
+                            >
+                                Search
+                            </Button>
+
+                            <IconButton
+                                type="submit"
+                                aria-label="Search"
+                                sx={{
+                                    display: { xs: "inline-flex", sm: "none" },
+                                    bgcolor: "#ff5722",
+                                    color: "#ffffff",
+                                    "&:hover": {
+                                        bgcolor: "#e64a19",
+                                    },
+                                }}
+                            >
+                                <SearchRoundedIcon />
+                            </IconButton>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: { xs: "none", md: "flex" },
+                                alignItems: "center",
+                                gap: 1,
+                            }}
+                        >
+                            <Button
+                                component={Link}
+                                to="/cart"
+                                variant="outlined"
+                                startIcon={
+                                    <Badge badgeContent={cartCount} color="error">
+                                        <ShoppingCartRoundedIcon />
+                                    </Badge>
+                                }
+                                sx={{
+                                    borderRadius: 999,
+                                    borderColor: "#ffd9cd",
+                                    color: "#2f241f",
+                                    px: 1.75,
+                                    textTransform: "none",
+                                    fontWeight: 700,
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                Cart
+                            </Button>
+
+                            <IconButton
+                                onClick={handleProfileClick}
+                                aria-label={isAuthenticated ? "Open profile menu" : "Go to login page"}
+                                sx={{
+                                    border: "1px solid #ffd9cd",
+                                    bgcolor: "#fff7f3",
+                                    color: "#ff5722",
+                                }}
+                            >
+                                {isAuthenticated ? (
+                                    <Avatar
+                                        sx={{
+                                            width: 30,
+                                            height: 30,
+                                            fontSize: 13,
+                                            fontWeight: 700,
+                                            bgcolor: "#ff5722",
+                                        }}
+                                    >
+                                        {userInitial}
+                                    </Avatar>
+                                ) : (
+                                    <AccountCircleRoundedIcon />
+                                )}
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                </AppBar>
+            </Box>
+
+            <Paper
+                elevation={0}
+                sx={{
+                    display: { xs: "block", md: "none" },
+                    position: "fixed",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: (theme) => theme.zIndex.appBar + 1,
+                    border: "1px solid #ffe2d6",
+                    borderBottom: "none",
+                    borderRadius: "18px 18px 0 0",
+                    boxShadow: "0 -10px 24px rgba(255, 87, 34, 0.12)",
+                    overflow: "hidden",
+                    bgcolor: "#ffffff",
+                }}
+            >
+                <BottomNavigation
+                    value={mobileNavValue}
+                    showLabels
+                    sx={{
+                        height: 72,
+                        bgcolor: "transparent",
+                        pb: "env(safe-area-inset-bottom)",
+                        "& .MuiBottomNavigationAction-root": {
+                            minWidth: 0,
+                            color: "#8a6a5c",
+                        },
+                        "& .Mui-selected": {
+                            color: "#ff5722",
+                        },
+                        "& .MuiBottomNavigationAction-label": {
+                            fontSize: 12,
+                            fontWeight: 700,
+                        },
+                    }}
+                >
+                    <BottomNavigationAction
+                        value="home"
+                        label="Home"
+                        icon={<HomeRoundedIcon />}
+                        component={Link}
+                        to="/"
+                    />
+                    <BottomNavigationAction
+                        value="cart"
+                        label="Cart"
+                        icon={
+                            <Badge badgeContent={cartCount} color="error">
+                                <ShoppingCartRoundedIcon />
+                            </Badge>
+                        }
+                        component={Link}
+                        to="/cart"
+                    />
+                    <BottomNavigationAction
+                        value="profile"
+                        label="Profile"
+                        icon={isAuthenticated ? <Avatar sx={{ width: 24, height: 24, fontSize: 12, bgcolor: "#ff5722" }}>{userInitial}</Avatar> : <AccountCircleRoundedIcon />}
+                        onClick={handleProfileClick}
+                    />
+                </BottomNavigation>
+            </Paper>
+
+            {isAuthenticated ? (
+                <Menu
+                    anchorEl={profileAnchorEl}
+                    open={Boolean(profileAnchorEl)}
+                    onClose={closeProfileMenu}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                >
+                    <MenuItem disabled sx={{ opacity: "1 !important", maxWidth: 260 }}>
+                        <Box>
+                            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Signed in as</Typography>
+                            <Typography sx={{ fontSize: 14, fontWeight: 700, whiteSpace: "normal", wordBreak: "break-word" }}>
+                                {userName}
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+                    <MenuItem component={Link} to="/logout" onClick={closeProfileMenu}>
+                        <ListItemIcon sx={{ minWidth: 34 }}>
+                            <LogoutRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Log Out
+                    </MenuItem>
+                </Menu>
+            ) : null}
+        </>
     );
 };
 
