@@ -14,7 +14,7 @@ const MainRoutes = ({ homeTopContent = null }) => {
   const location = useLocation();
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       {/* Common header */}
       <Header key={location.pathname} />
 

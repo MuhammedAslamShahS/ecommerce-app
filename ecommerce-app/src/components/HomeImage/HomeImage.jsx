@@ -66,7 +66,7 @@ const HomeImage = () => {
                     position: "relative",
                     overflow: "hidden",
                     borderRadius: { xs: 4, md: 6 },
-                    background: "linear-gradient(135deg, #ffb064 0%, #ff7a00 45%, #ff6a00 100%)",
+                    background: "rgba(255, 87, 34, 1)",
                     boxShadow: "0 24px 48px rgba(255, 106, 0, 0.18)",
                 }}
             >
