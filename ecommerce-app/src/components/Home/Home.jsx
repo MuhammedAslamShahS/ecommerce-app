@@ -11,6 +11,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { getAllProducts } from "../../ApiService/api";
+import TopCategories from "../TopCategories/TopCategories";
 
 const loadingPlaceholders = Array.from({ length: 8 });
 
@@ -65,6 +66,8 @@ const Home = () => {
     };
 
     return (
+        <>
+        <TopCategories/>
         <Box
             id="home-products-section"
             tabIndex={-1}
@@ -313,6 +316,7 @@ const Home = () => {
                 </Stack>
             </Box>
         </Box>
+        </>
     );
 };
 
