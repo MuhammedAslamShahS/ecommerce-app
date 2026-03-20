@@ -1,17 +1,19 @@
 import "./Footer.css";
+import { NavLink } from "react-router-dom";
+
 const Footer = () => {
     return (
         <div className="footer-main-container">
-
             {/* 1st Box */}
-            <div className="top-stripe">Back To Top</div>
+           
+                <div className="top-stripe"  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Back To Top </div>
 
             {/* 2nd Box */}
             <div className="footer-main-block">
                 <div className="footer-grid">
                     <div className="footer-column">
                         <h4>Get to Know Us</h4>
-                        <p>About Amazon</p>
+                        <p>About Store</p>
                         <p>Careers</p>
                         <p>Press Releases</p>
                     </div>
@@ -25,7 +27,7 @@ const Footer = () => {
 
                     <div className="footer-column">
                         <h4>Make Money with Us</h4>
-                        <p>Sell on Amazon</p>
+                        <p>Sell on Store</p>
                         <p>Affiliate</p>
                         <p>Advertise Products</p>
                     </div>
@@ -47,11 +49,15 @@ const Footer = () => {
             </div>
 
             {/* 4th Box */}
-            <div className="services-trip"><p>Services section</p></div>
+            <div className="services-trip">
+                <p>Services section</p>
+            </div>
 
             {/* 5th Box */}
             <div className="legal-ottom-bar">
-                <p><span>Privacy Notice</span>Cookies Notice</p>
+                <p>
+                    <span>Privacy Notice</span> Cookies Notice
+                </p>
                 <p>© 2020-2026, store.com</p>
             </div>
         </div>
