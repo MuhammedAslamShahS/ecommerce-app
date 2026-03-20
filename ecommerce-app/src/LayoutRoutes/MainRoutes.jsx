@@ -10,13 +10,15 @@ import Login from "../components/Login/Login";
 import SignUp from "../components/SignUp/SignUp";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
-const MainRoutes = () => {
+const MainRoutes = ({ homeTopContent = null }) => {
   const location = useLocation();
 
   return (
     <div>
       {/* Common header */}
       <Header key={location.pathname} />
+
+      {location.pathname === "/" ? homeTopContent : null}
 
       <Routes>
         {/* Public routes */}

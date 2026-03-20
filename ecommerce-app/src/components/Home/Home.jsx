@@ -65,7 +65,16 @@ const Home = () => {
     };
 
     return (
-        <Box sx={{ px: { xs: 1.5, sm: 2.5, lg: 4 }, pb: 6 }}>
+        <Box
+            id="home-products-section"
+            tabIndex={-1}
+            sx={{
+                px: { xs: 1.5, sm: 2.5, lg: 4 },
+                pb: 6,
+                scrollMarginTop: { xs: "104px", md: "120px" },
+                outline: "none",
+            }}
+        >
             <Box sx={{ maxWidth: 1440, mx: "auto" }}>
                 <Stack spacing={3}>
                     <Box
@@ -73,30 +82,7 @@ const Home = () => {
                             px: { xs: 0.5, sm: 1 },
                             pt: 1,
                         }}
-                    >
-                        <Typography
-                            variant="h4"
-                            sx={{
-                                fontSize: { xs: 28, sm: 34, md: 40 },
-                                fontWeight: 800,
-                                lineHeight: 1.1,
-                                color: "#1f1a17",
-                            }}
-                        >
-                            Explore Everyday Favorites
-                        </Typography>
-                        <Typography
-                            sx={{
-                                mt: 1,
-                                maxWidth: 640,
-                                fontSize: { xs: 14, sm: 16 },
-                                color: "rgba(74, 52, 43, 0.78)",
-                                lineHeight: 1.7,
-                            }}
-                        >
-                            Browse curated picks with a cleaner product grid, faster scanning, and a better mobile layout.
-                        </Typography>
-                    </Box>
+                    ></Box>
 
                     {searchQuery ? (
                         <Box
@@ -113,11 +99,16 @@ const Home = () => {
                             }}
                         >
                             <Box>
-                                <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#ff5722", textTransform: "uppercase" }}>
+                                <Typography
+                                    sx={{ fontSize: 13, fontWeight: 700, color: "#ff5722", textTransform: "uppercase" }}
+                                >
                                     Search Results
                                 </Typography>
-                                <Typography sx={{ mt: 0.35, fontSize: { xs: 14, sm: 16 }, fontWeight: 600, color: "#4a342b" }}>
-                                    {filteredProducts.length} result{filteredProducts.length === 1 ? "" : "s"} for "{searchQuery}"
+                                <Typography
+                                    sx={{ mt: 0.35, fontSize: { xs: 14, sm: 16 }, fontWeight: 600, color: "#4a342b" }}
+                                >
+                                    {filteredProducts.length} result{filteredProducts.length === 1 ? "" : "s"} for "
+                                    {searchQuery}"
                                 </Typography>
                             </Box>
                             <Button
@@ -147,7 +138,10 @@ const Home = () => {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    <Skeleton variant="rectangular" sx={{ height: { xs: 150, sm: 230 }, bgcolor: "#fff1eb" }} />
+                                    <Skeleton
+                                        variant="rectangular"
+                                        sx={{ height: { xs: 150, sm: 230 }, bgcolor: "#fff1eb" }}
+                                    />
                                     <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>
                                         <Skeleton width="55%" height={28} />
                                         <Skeleton width="90%" height={26} />
