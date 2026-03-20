@@ -1,211 +1,219 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { useEffect, useRef, useState } from "react";
+import "./HomeImage.css";
 
-const bannerImage =
-    "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80";
+const slides = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80",
+    title: "Premium Fashion",
+    subtitle: "Discover timeless styles",
+  },
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80",
+    title: "New Arrivals",
+    subtitle: "Latest trends for you",
+  },
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1600&q=80",
+    title: "Luxury Collection",
+    subtitle: "Elevate your style",
+  },
+  {
+    id: 4,
+    image:
+      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80",
+    title: "Premium Fashion",
+    subtitle: "Discover timeless styles",
+  },
+  {
+    id: 5,
+    image:
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80",
+    title: "New Arrivals",
+    subtitle: "Latest trends for you",
+  },
+  {
+    id: 6,
+    image:
+      "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1600&q=80",
+    title: "Luxury Collection",
+    subtitle: "Elevate your style",
+  },
+  {
+    id: 7,
+    image:
+      "https://images.unsplash.com/photo-1592878849122-5b1c6b6f1e3b?auto=format&fit=crop&w=1600&q=80",
+    title: "Men’s Belts",
+    subtitle: "Refined accessories for every outfit",
+  },
+  {
+    id: 8,
+    image:
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=1600&q=80",
+    title: "Perfume Collection",
+    subtitle: "Signature scents for every moment",
+  },
+  {
+    id: 9,
+    image:
+      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80",
+    title: "Kids Wear",
+    subtitle: "Comfort and style for little ones",
+  },
+  {
+    id: 10,
+    image:
+      "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=1600&q=80",
+    title: "Watches",
+    subtitle: "Timeless elegance on your wrist",
+  },
+  {
+    id: 11,
+    image:
+      "https://images.unsplash.com/photo-1521335629791-ce4aec67ddaf?auto=format&fit=crop&w=1600&q=80",
+    title: "Footwear",
+    subtitle: "Step into style and comfort",
+  },
+  {
+    id: 12,
+    image:
+      "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?auto=format&fit=crop&w=1600&q=80",
+    title: "Sunglasses",
+    subtitle: "Upgrade your everyday look",
+  },
+  {
+    id: 13,
+    image:
+      "https://images.unsplash.com/photo-1583009021823-7c6c7a4a8c2b?auto=format&fit=crop&w=1600&q=80",
+    title: "Handbags",
+    subtitle: "Carry style wherever you go",
+  },
+];
+
+const sliderData = [slides[slides.length - 1], ...slides, slides[0]];
 
 const HomeImage = () => {
-    const handleShopNowClick = () => {
-        const homeSection = document.getElementById("home-products-section");
+  const [index, setIndex] = useState(1);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
+  const intervalRef = useRef(null);
 
-        if (!homeSection) {
-            return;
-        }
+  const startAutoSlide = () => {
+    stopAutoSlide();
 
-        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const startY = window.scrollY;
-        const sectionTop = homeSection.getBoundingClientRect().top + startY;
-        const scrollMarginTop = Number.parseFloat(window.getComputedStyle(homeSection).scrollMarginTop || "0") || 0;
-        const targetY = Math.max(sectionTop - scrollMarginTop, 0);
+    intervalRef.current = setInterval(() => {
+      setIndex((prev) => prev + 1);
+    }, 3000);
+  };
 
-        if (prefersReducedMotion) {
-            window.scrollTo({ top: targetY });
-            homeSection.focus();
-            return;
-        }
+  const stopAutoSlide = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  };
 
-        const duration = 500;
-        const distance = targetY - startY;
-        const startTime = performance.now();
+  useEffect(() => {
+    startAutoSlide();
 
-        const easeInOutCubic = (progress) => {
-            if (progress < 0.5) {
-                return 4 * progress * progress * progress;
-            }
+    return () => stopAutoSlide();
+  }, []);
 
-            return 1 - Math.pow(-2 * progress + 2, 3) / 2;
-        };
+  const handleTransitionEnd = () => {
+    if (index === sliderData.length - 1) {
+      setTransitionEnabled(false);
+      setIndex(1);
+    }
 
-        const animateScroll = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easedProgress = easeInOutCubic(progress);
+    if (index === 0) {
+      setTransitionEnabled(false);
+      setIndex(slides.length);
+    }
+  };
 
-            window.scrollTo({
-                top: startY + distance * easedProgress,
-            });
+  useEffect(() => {
+    if (!transitionEnabled) {
+      const id = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransitionEnabled(true);
+        });
+      });
 
-            if (progress < 1) {
-                window.requestAnimationFrame(animateScroll);
-                return;
-            }
+      return () => cancelAnimationFrame(id);
+    }
+  }, [transitionEnabled]);
 
-            homeSection.focus();
-        };
+  const prevSlide = () => {
+    stopAutoSlide();
+    setIndex((prev) => prev - 1);
+    startAutoSlide();
+  };
 
-        window.requestAnimationFrame(animateScroll);
-    };
+  const nextSlide = () => {
+    stopAutoSlide();
+    setIndex((prev) => prev + 1);
+    startAutoSlide();
+  };
 
-    return (
-        <Box sx={{ px: { xs: 1.5, sm: 2.5, lg: 4 }, pt: { xs: 1, sm: 1.5 }, pb: { xs: 2, md: 3 } }}>
-            <Box
-                sx={{
-                    maxWidth: 1440,
-                    mx: "auto",
-                    position: "relative",
-                    overflow: "hidden",
-                    borderRadius: { xs: 4, md: 6 },
-                    background: "rgba(255, 87, 34, 1)",
-                    boxShadow: "0 24px 48px rgba(255, 106, 0, 0.18)",
-                }}
-            >
-                <Box
-                    sx={{
-                        position: "absolute",
-                        inset: 0,
-                        pointerEvents: "none",
-                        opacity: 0.3,
-                    }}
-                >
-                    <Box sx={{ position: "absolute", left: { xs: 16, md: 40 }, top: { xs: 20, md: 28 }, width: { xs: 18, md: 22 }, height: { xs: 120, md: 220 }, bgcolor: "#ff8f3a" }} />
-                    <Box sx={{ position: "absolute", left: { xs: 46, md: 78 }, top: { xs: 20, md: 28 }, width: { xs: 18, md: 22 }, height: { xs: 120, md: 220 }, bgcolor: "#ffd0a4" }} />
-                    <Box sx={{ position: "absolute", right: { xs: 20, md: 40 }, top: { xs: 0, md: 0 }, width: { xs: 18, md: 24 }, height: { xs: 150, md: 320 }, bgcolor: "#ffd0a4" }} />
-                    <Box sx={{ position: "absolute", right: { xs: 52, md: 88 }, top: { xs: 0, md: 0 }, width: { xs: 18, md: 24 }, height: { xs: 150, md: 320 }, bgcolor: "#ff8f3a" }} />
-                </Box>
+  const goToSlide = (slideIndex) => {
+    stopAutoSlide();
+    setIndex(slideIndex + 1);
+    startAutoSlide();
+  };
 
-                <Box
-                    sx={{
-                        position: "relative",
-                        zIndex: 1,
-                        display: "grid",
-                        gridTemplateColumns: { xs: "1fr", md: "1.15fr 0.85fr" },
-                        alignItems: "stretch",
-                    }}
-                >
-                    <Box sx={{ position: "relative", p: { xs: 2, sm: 3, md: 4 } }}>
-                        <Box
-                            sx={{
-                                borderRadius: { xs: 4, md: "34px" },
-                                overflow: "hidden",
-                                minHeight: { xs: 260, sm: 340, md: 430 },
-                                bgcolor: "#f4ede7",
-                            }}
-                        >
-                            <Box
-                                component="img"
-                                src={bannerImage}
-                                alt="Fashion sale banner"
-                                sx={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                }}
-                            />
-                        </Box>
+  const activeDotIndex =
+    index === 0
+      ? slides.length - 1
+      : index === sliderData.length - 1
+      ? 0
+      : index - 1;
 
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                left: { xs: 28, sm: 42, md: 56 },
-                                bottom: { xs: 18, sm: 26, md: 36 },
-                                bgcolor: "#ff6a00",
-                                color: "#ffffff",
-                                px: { xs: 2, sm: 2.5, md: 3 },
-                                py: { xs: 1.6, sm: 1.8, md: 2.2 },
-                                borderRadius: 1.5,
-                                boxShadow: "0 18px 32px rgba(255, 106, 0, 0.2)",
-                            }}
-                        >
-                            <Typography sx={{ fontSize: { xs: 14, sm: 16 }, fontWeight: 800, fontStyle: "italic", lineHeight: 1 }}>
-                                DISCOUNT
-                            </Typography>
-                            <Typography sx={{ fontSize: { xs: 44, sm: 56, md: 64 }, fontWeight: 900, lineHeight: 0.95 }}>
-                                50%
-                            </Typography>
-                            <Typography sx={{ fontSize: { xs: 18, sm: 24 }, fontWeight: 800, lineHeight: 1 }}>
-                                OFF
-                            </Typography>
-                        </Box>
-                    </Box>
+  return (
+    <section className="home-image">
+      <div
+        className="home-image-track"
+        onTransitionEnd={handleTransitionEnd}
+        style={{
+          transform: `translateX(-${index * 100}%)`,
+          transition: transitionEnabled ? "transform 0.7s ease-in-out" : "none",
+        }}
+      >
+        {sliderData.map((item, i) => (
+          <div className="home-image-slide" key={`${item.id}-${i}`}>
+            <img src={item.image} alt={item.title} />
+            <div className="overlay" />
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: { xs: "flex-start", md: "center" },
-                            px: { xs: 2.5, sm: 4, md: 5 },
-                            pb: { xs: 3.5, md: 0 },
-                            pt: { xs: 0, md: 4 },
-                        }}
-                    >
-                        <Typography
-                            sx={{
-                                fontFamily: '"Cormorant Garamond", "Times New Roman", serif',
-                                fontSize: { xs: 52, sm: 68, md: 86 },
-                                lineHeight: 0.92,
-                                letterSpacing: "-0.02em",
-                                color: "#ffffff",
-                                textAlign: { xs: "left", md: "center" },
-                            }}
-                        >
-                            FASHION
-                            <br />
-                            SALE
-                        </Typography>
+            <div className="content">
+              <p>{item.subtitle}</p>
+              <h1>{item.title}</h1>
+              <button>Shop Now</button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-                        <Button
-                            onClick={handleShopNowClick}
-                            variant="outlined"
-                            sx={{
-                                mt: { xs: 3, md: 4 },
-                                px: 3,
-                                py: 1,
-                                borderColor: "#ffffff",
-                                color: "#ffffff",
-                                borderRadius: 0.5,
-                                textTransform: "none",
-                                fontWeight: 800,
-                                fontSize: { xs: 16, md: 18 },
-                                "&:hover": {
-                                    borderColor: "#ffffff",
-                                    backgroundColor: "rgba(255,255,255,0.08)",
-                                },
-                            }}
-                        >
-                            SHOP NOW
-                        </Button>
+      <button className="arrow left" onClick={prevSlide}>
+        &#10094;
+      </button>
 
-                        <Box sx={{ display: "flex", gap: 1.5, mt: { xs: 3, md: 4 } }}>
-                            {[0, 1, 2].map((dot) => (
-                                <Box
-                                    key={dot}
-                                    sx={{
-                                        width: { xs: 16, md: 18 },
-                                        height: { xs: 16, md: 18 },
-                                        borderRadius: "50%",
-                                        bgcolor: dot === 0 ? "#ff6a00" : "rgba(255, 255, 255, 0.5)",
-                                        border: "2px solid rgba(255, 255, 255, 0.55)",
-                                    }}
-                                />
-                            ))}
-                        </Box>
-                    </Box>
-                </Box>
-            </Box>
-        </Box>
-    );
+      <button className="arrow right" onClick={nextSlide}>
+        &#10095;
+      </button>
+
+      <div className="dots">
+        {slides.map((_, i) => (
+          <span
+            key={i}
+            className={i === activeDotIndex ? "dot active" : "dot"}
+            onClick={() => goToSlide(i)}
+          />
+        ))}
+      </div>
+    </section>
+  );
 };
 
 export default HomeImage;
