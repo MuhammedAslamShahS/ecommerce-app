@@ -1,0 +1,112 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.topbar-container-1 {
+  width: 100%;
+  background-color: black;
+  color: rgb(234, 181, 8);
+  text-align: center;
+  font-size: 13.5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-weight: 100;
+}
+
+/* ============================================ */
+/* ============================================ */
+
+.topbar-container-2 {
+  width: 100%;
+  height: 38px;
+  background-color: rgb(42, 41, 41);
+  color: white;
+  font-family: sans-serif;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 5px;
+}
+
+/* 3,4,5 sections general designs */
+
+.contact-container,
+.my-profile-container,
+.love-cart-container {
+  width: 180px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: 12px;
+}
+
+.icon {
+  font-size: 28px;
+}
+
+/* ====================================== */
+
+.about {
+  width: 165px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  border-right: 1px solid gray;
+}
+
+.delivery-store-container {
+  width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.delivery {
+  text-align: left;
+  font-size: 11px;
+}
+
+.delivery-text-1 {
+  font-size: 9px;
+}
+
+.delivery-text-2 {
+  font-size: 9.9px;
+}
+
+.store {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.store-text {
+  font-size: 12px;
+  text-align: center;
+  margin-left: 10px;
+}
+
+/* ==================================================== */
+.section-3 {
+  display: flex;
+}
+
+/* section-3 */
+
+.contact-text {
+  font-size: 12px;
+}
+
+.message-icon {
+  font-size: 28px;
+}
+
+.profile-text {
+  font-size: 12px;
+}
